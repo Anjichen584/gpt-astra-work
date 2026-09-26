@@ -1,10 +1,7 @@
 package com.arena.bloodmoon.mob;
 
+import com.arena.bloodmoon.config.Cfg;
 import com.arena.bloodmoon.tier.Tier;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,8 +33,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 import java.util.Map;
 import java.util.Random;
@@ -295,24 +290,12 @@ public final class EliteFactory {
             hp.setBaseValue(hp.getBaseValue() * hpMult);
             mob.setHealth(hp.getValue());
         }
-        mob.customName(Component.text("\u2620 " + type.display() + " \u2620", NamedTextColor.DARK_RED, TextDecoration.BOLD));
-        mob.setCustomNameVisible(true);
         mob.setPersistent(true);
         mob.setRemoveWhenFarAway(false);
         mob.getPersistentDataContainer().set(eliteKey, PersistentDataType.STRING, type.name());
         REGISTRY.put(mob.getUniqueId(), type);
-        glowRed(mob);
-    }
-
-    private static void glowRed(LivingEntity mob) {
-        Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
-        Team team = board.getTeam("bm_elite");
-        if (team == null) {
-            team = board.registerNewTeam("bm_elite");
-            team.color(NamedTextColor.RED);
-        }
-        team.addEntry(mob.getUniqueId().toString());
-        mob.setGlowing(true);
+        // 头顶名称 / 高亮 / 显示范围 全部由 config 统一管理（display.* 段）
+        MobDisplay.apply(mob, type.display(), Cfg.nameEliteFormat(), Cfg.nameElite(), Cfg.glowElite());
     }
 
     private static void setScale(LivingEntity mob, double scale) {

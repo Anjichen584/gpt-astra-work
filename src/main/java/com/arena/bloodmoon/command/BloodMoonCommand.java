@@ -2,6 +2,7 @@ package com.arena.bloodmoon.command;
 
 import com.arena.bloodmoon.BloodMoonManager;
 import com.arena.bloodmoon.BloodMoonPlugin;
+import com.arena.bloodmoon.mob.MobDisplay;
 import com.arena.bloodmoon.mob.EliteFactory;
 import com.arena.bloodmoon.stats.StatsManager;
 import com.arena.bloodmoon.tier.Tier;
@@ -237,6 +238,8 @@ public class BloodMoonCommand implements org.bukkit.command.CommandExecutor, Tab
 
     private boolean reload(CommandSender sender) {
         plugin.reloadConfig();
+        // 重载后按新配置重建名称范围任务并立即刷新一次显示
+        MobDisplay.reload(plugin);
         sender.sendMessage(Text.msg("配置已重载。", NamedTextColor.GOLD));
         return true;
     }

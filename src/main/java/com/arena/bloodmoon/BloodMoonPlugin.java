@@ -12,6 +12,7 @@ import com.arena.bloodmoon.listener.MobSpawnListener;
 import com.arena.bloodmoon.listener.PlayerListener;
 import com.arena.bloodmoon.mob.EliteFactory;
 import com.arena.bloodmoon.mob.MobBuffer;
+import com.arena.bloodmoon.mob.MobDisplay;
 import com.arena.bloodmoon.shop.ShopGUI;
 import com.arena.bloodmoon.stats.StatsManager;
 import org.bukkit.Bukkit;
@@ -73,6 +74,7 @@ public final class BloodMoonPlugin extends JavaPlugin {
         }
 
         moonManager.startTicking();
+        MobDisplay.startRangeTask(this);   // 头顶名称显示范围维护（低频，间隔见 config）
         mobAbilities.startTicking();
         statsManager.startAutoSave();
 
@@ -81,6 +83,7 @@ public final class BloodMoonPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        MobDisplay.stopRangeTask();
         if (moonManager != null) {
             moonManager.shutdown();
         }

@@ -1,6 +1,8 @@
 package com.arena.bloodmoon;
 
+import com.arena.bloodmoon.config.Cfg;
 import com.arena.bloodmoon.mob.EliteFactory;
+import com.arena.bloodmoon.mob.MobDisplay;
 import com.arena.bloodmoon.tier.Tier;
 import com.arena.bloodmoon.util.Spawns;
 import com.arena.bloodmoon.util.Text;
@@ -103,7 +105,7 @@ public class BloodMoonManager {
 
         ambience(world);
 
-        if (plugin.getConfig().getBoolean("mobs.spawn-pressure", true) && seconds % 30 == 0) {
+        if (Cfg.pressureEnable() && seconds % Cfg.pressureIntervalSeconds() == 0) {
             spawnPressure(world);
         }
 
@@ -269,6 +271,7 @@ public class BloodMoonManager {
                 living.remove();
             }
             EliteFactory.registry().remove(id);
+            MobDisplay.untrack(id);
         }
     }
 
@@ -311,13 +314,21 @@ public class BloodMoonManager {
         if (players.isEmpty()) {
             return;
         }
-        int cap = plugin.getConfig().getInt("mobs.pressure-cap", 24);
+        int cap = Cfg.pressureCap();
+        double perPlayer = Cfg.pressureChancePerPlayer();
+        int scanR = Cfg.pressureScanRadius();
+        int scanH = Cfg.pressureScanHeight();
+        int radiusMin = Cfg.pressureRadiusMin();
+        int radiusMax = Cfg.pressureRadiusMax();
+        // 每波刷怪量 = pack-base + pack-per-tier × 阶层等级，并受 pack-max 硬上限约束
+        int packSize = Math.min(Cfg.pressurePackMax(),
+                Math.max(0, Cfg.pressurePackBase() + Cfg.pressurePackPerTier() * tier.level()));
         for (Player p : players) {
-            if (random.nextDouble() > 0.4) {
+            if (random.nextDouble() > perPlayer) {
                 continue;
             }
             int nearby = 0;
-            for (Entity e : p.getNearbyEntities(28, 16, 28)) {
+            for (Entity e : p.getNearbyEntities(scanR, scanH, scanR)) {
                 if (e instanceof Enemy) {
                     nearby++;
                 }
@@ -325,9 +336,8 @@ public class BloodMoonManager {
             if (nearby >= cap) {
                 continue;
             }
-            int packSize = 2 + tier.level();
             for (int i = 0; i < packSize; i++) {
-                Location spot = Spawns.findSpot(p.getLocation(), random, 12, 22);
+                Location spot = Spawns.findSpot(p.getLocation(), random, radiusMin, radiusMax);
                 if (spot != null) {
                     EliteFactory.spawnBuffedBasic(PRESSURE_TYPES[random.nextInt(PRESSURE_TYPES.length)], spot, tier);
                 }

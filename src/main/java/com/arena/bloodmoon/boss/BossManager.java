@@ -1,15 +1,16 @@
 package com.arena.bloodmoon.boss;
 
 import com.arena.bloodmoon.BloodMoonPlugin;
+import com.arena.bloodmoon.config.Cfg;
 import com.arena.bloodmoon.item.Items;
 import com.arena.bloodmoon.mob.EliteFactory;
 import com.arena.bloodmoon.mob.MobBuffer;
+import com.arena.bloodmoon.mob.MobDisplay;
 import com.arena.bloodmoon.tier.Tier;
 import com.arena.bloodmoon.util.Spawns;
 import com.arena.bloodmoon.util.Text;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -123,9 +124,8 @@ public class BossManager implements Listener {
             eq.setHelmet(new ItemStack(Material.NETHERITE_HELMET));
             eq.setHelmetDropChance(0f);
 
-            ws.customName(Component.text("\u2620 血月领主 \u00b7 卡尔诺斯 \u2620",
-                    NamedTextColor.DARK_RED, TextDecoration.BOLD));
-            ws.setCustomNameVisible(true);
+            // 领主名称 / 高亮 / 显示范围 同样由 config 统一管理
+            MobDisplay.apply(ws, Cfg.bossDisplayName(), Cfg.nameBossFormat(), Cfg.nameBoss(), Cfg.glowBoss());
             ws.setPersistent(true);
             ws.setRemoveWhenFarAway(false);
             ws.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, PotionEffect.INFINITE_DURATION, 0, true, false));
@@ -135,7 +135,7 @@ public class BossManager implements Listener {
 
         bossId = boss.getUniqueId();
 
-        bossBar = Bukkit.createBossBar("\u00a74\u00a7l\u2620 血月领主 \u00b7 卡尔诺斯 \u2620",
+        bossBar = Bukkit.createBossBar("\u00a74\u00a7l\u2620 " + Cfg.bossDisplayName() + " \u2620",
                 BarColor.PURPLE, BarStyle.SEGMENTED_20);
         for (Player p : world.getPlayers()) {
             bossBar.addPlayer(p);

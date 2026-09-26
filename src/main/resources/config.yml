@@ -28,14 +28,64 @@ tiers:
   weights: [30, 28, 22, 14, 6]
 
 mobs:
-  # 周期性向玩家周围施加刷怪压力（尸潮压迫感）
-  spawn-pressure: true
-  # 玩家周围敌对生物数量上限（超过则不再加压）
-  pressure-cap: 24
   # 普通血月怪获得装备的基础概率
   gear-chance: 0.25
   # 血月生物的爆炸是否破坏方块（苦力怕/陨星/凋灵之首）
   explosion-block-damage: false
+
+# ============================================
+#  怪物显示：高亮描边 / 头顶名称 / 显示范围
+#  （统一管理，改完 /bm reload 立即生效）
+# ============================================
+display:
+  glow:
+    elite: true          # 精英魔物是否发光高亮
+    boss: true           # 血月领主是否发光高亮
+    color: DARK_RED      # 描边颜色: BLACK/DARK_BLUE/DARK_GREEN/DARK_AQUA/DARK_RED/DARK_PURPLE/GOLD/GRAY/DARK_GRAY/BLUE/GREEN/AQUA/RED/LIGHT_PURPLE/YELLOW/WHITE
+  name:
+    elite: true          # 精英魔物是否显示头顶名称
+    boss: true           # 血月领主是否显示头顶名称
+    always-visible: true # true=名称常显；false=仅准星指向时显示（原版行为）
+    view-range: 32       # 头顶名称显示范围（格）；<=0 表示不限制，交给客户端默认
+    range-check-seconds: 2   # 范围检查间隔（秒），越大越省 TPS
+    show-health: false   # 名称后是否追加当前/最大血量
+    elite-format: "&4&l\u2620 {name} \u2620"   # {name} = 精英类型名
+    boss-format: "&4&l\u2620 {name} \u2620"    # {name} = 下面的 boss-name
+    boss-name: "血月领主 \u00b7 卡尔诺斯"
+
+# ============================================
+#  刷怪量统一管理
+# ============================================
+spawns:
+  # 周期性向玩家周围施加刷怪压力（尸潮压迫感）
+  pressure:
+    enable: true
+    interval-seconds: 30     # 每隔多少秒加压一次
+    chance-per-player: 0.4   # 每名玩家本轮被加压的概率
+    cap: 24                  # 玩家周围敌对生物数量上限，超过则跳过
+    scan-radius: 28          # 统计附近怪物的水平半径
+    scan-height: 16          # 统计附近怪物的垂直半径
+    pack-base: 2             # 每波数量 = pack-base + pack-per-tier × 血月阶层
+    pack-per-tier: 1
+    pack-max: 12             # 每波硬上限，防止配置写飞打崩服务器
+    radius-min: 12           # 生成点距玩家最近距离
+    radius-max: 22           # 生成点距玩家最远距离
+  # 灾厄事件“尸潮涌动”
+  horde:
+    base: 5                  # 数量 = base + per-tier × 血月阶层
+    per-tier: 2
+    max: 30                  # 硬上限
+    radius-min: 8
+    radius-max: 16
+  # 接管原版自然刷怪时的精英替换
+  elite:
+    chance-multiplier: 1.0   # 精英出现概率 = 阶层精英率 × 该倍率（0 = 不再替换精英）
+  # 自然刷怪附带的增援小队
+  reinforcement:
+    chance: 0.35             # 触发概率
+    max: 0                   # 额外数量上限，0 = 使用阶层默认 packs
+    radius-min: 2
+    radius-max: 5
 
 events:
   # 随机灾厄事件的间隔（秒）

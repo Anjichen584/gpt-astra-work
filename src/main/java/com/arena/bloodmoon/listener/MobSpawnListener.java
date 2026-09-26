@@ -2,6 +2,7 @@ package com.arena.bloodmoon.listener;
 
 import com.arena.bloodmoon.BloodMoonManager;
 import com.arena.bloodmoon.BloodMoonPlugin;
+import com.arena.bloodmoon.config.Cfg;
 import com.arena.bloodmoon.mob.EliteFactory;
 import com.arena.bloodmoon.mob.MobBuffer;
 import com.arena.bloodmoon.tier.Tier;
@@ -58,7 +59,7 @@ public class MobSpawnListener implements Listener {
         boolean natural = event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL;
 
         // 精英替换
-        if (natural && random.nextDouble() < tier.eliteChance()) {
+        if (natural && random.nextDouble() < tier.eliteChance() * Cfg.eliteChanceMultiplier()) {
             event.setCancelled(true);
             EliteFactory.spawnElite(EliteFactory.EliteType.random(random), event.getLocation(), tier);
             return;
@@ -68,9 +69,13 @@ public class MobSpawnListener implements Listener {
         MobBuffer.gear(mob, tier, plugin.getConfig().getDouble("mobs.gear-chance", 0.25), random);
 
         // 高阶血月: 自然刷怪概率携带增援小队
-        if (natural && tier.packs() > 1 && random.nextDouble() < 0.35) {
-            for (int i = 1; i < tier.packs(); i++) {
-                Location spot = Spawns.findSpot(event.getLocation(), random, 2, 5);
+        int extra = Cfg.reinforcementMax() > 0
+                ? Math.min(Cfg.reinforcementMax(), tier.packs() - 1)
+                : tier.packs() - 1;
+        if (natural && extra > 0 && random.nextDouble() < Cfg.reinforcementChance()) {
+            for (int i = 0; i < extra; i++) {
+                Location spot = Spawns.findSpot(event.getLocation(), random,
+                        Cfg.reinforcementRadiusMin(), Cfg.reinforcementRadiusMax());
                 if (spot != null) {
                     EliteFactory.spawnBuffedBasic(mob.getType(), spot, tier);
                 }

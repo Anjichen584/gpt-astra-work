@@ -1,6 +1,7 @@
 package com.arena.bloodmoon.event;
 
 import com.arena.bloodmoon.BloodMoonPlugin;
+import com.arena.bloodmoon.config.Cfg;
 import com.arena.bloodmoon.item.Items;
 import com.arena.bloodmoon.mob.EliteFactory;
 import com.arena.bloodmoon.mob.MobBuffer;
@@ -146,9 +147,11 @@ public class EventDirector implements Listener {
         }
         Text.broadcast(world, Text.msg("\u2694 尸潮涌动! 大地之下传来无数抓挠声...", NamedTextColor.RED));
         world.playSound(target.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 1.5f, 0.5f);
-        int count = 5 + tier.level() * 2;
+        // 尸潮刷怪量 = spawns.horde.base + per-tier × 阶层等级（受 max 上限约束）
+        int count = Math.min(Cfg.hordeMax(), Math.max(0, Cfg.hordeBase() + Cfg.hordePerTier() * tier.level()));
         for (int i = 0; i < count; i++) {
-            Location spot = Spawns.findSpot(target.getLocation(), random, 8, 16);
+            Location spot = Spawns.findSpot(target.getLocation(), random,
+                    Cfg.hordeRadiusMin(), Cfg.hordeRadiusMax());
             if (spot == null) {
                 continue;
             }
