@@ -1,0 +1,64 @@
+# ============================================
+#  BloodMoon 血月 - 配置文件
+#  适用: Paper 1.21.10
+# ============================================
+
+# 血月会降临的世界（主世界名列表）
+worlds:
+  - world
+
+trigger:
+  # 每晚触发血月的基础概率 (0.0 - 1.0)
+  chance: 0.25
+  # 满月之夜额外增加的概率
+  full-moon-bonus: 0.35
+  # 是否只有满月之夜才可能触发
+  only-full-moon: false
+
+night:
+  # 血月期间禁止睡觉
+  disable-sleep: true
+  # 血月开始时降下雷暴
+  storm: true
+  # 黎明时清除所有存活的精英魔物
+  purge-elites-at-dawn: true
+
+# 五个血月阶层的随机权重 (对应 1猩红/2泣血/3屠戮/4梦魇/5天启)
+tiers:
+  weights: [30, 28, 22, 14, 6]
+
+mobs:
+  # 周期性向玩家周围施加刷怪压力（尸潮压迫感）
+  spawn-pressure: true
+  # 玩家周围敌对生物数量上限（超过则不再加压）
+  pressure-cap: 24
+  # 普通血月怪获得装备的基础概率
+  gear-chance: 0.25
+  # 血月生物的爆炸是否破坏方块（苦力怕/陨星/凋灵之首）
+  explosion-block-damage: false
+
+events:
+  # 随机灾厄事件的间隔（秒）
+  interval-seconds: 45
+  meteor: true       # 陨星雨
+  horde: true        # 尸潮涌动
+  fog: true          # 血雾弥漫
+  thunder: true      # 猩红雷罚
+  blessing: true     # 血月赐福（正面）
+  bats: true         # 蝠群蔽月
+  supply: true       # 空投血匣
+  gravity: true      # 引力紊乱
+
+boss:
+  # 是否允许血月领主降临
+  enabled: true
+  # 领主降临所需的最低血月阶层 (1-5)
+  min-tier: 4
+  # 领主基础生命值（会随阶层再放大）
+  health: 600.0
+
+rewards:
+  # 黎明时每阶层发放的血月残晶数
+  dawn-shards-per-tier: 3
+  # 整夜未死亡的幸存者额外残晶
+  survivor-bonus: 4

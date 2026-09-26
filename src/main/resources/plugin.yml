@@ -1,0 +1,18 @@
+name: BloodMoon
+version: '${version}'
+main: com.arena.bloodmoon.BloodMoonPlugin
+api-version: '1.21'
+description: 血月降临 —— 五阶血月、精英魔物、血月领主、随机灾厄、血晶经济与血月黑市。
+author: Arena
+commands:
+  bloodmoon:
+    description: 血月主命令
+    aliases: [bm, xueyue]
+    usage: /bloodmoon help
+permissions:
+  bloodmoon.use:
+    description: 使用血月基础命令（商店/战绩/排行）
+    default: true
+  bloodmoon.admin:
+    description: 血月管理命令
+    default: op
